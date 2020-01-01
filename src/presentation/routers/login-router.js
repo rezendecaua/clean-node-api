@@ -25,6 +25,6 @@ module.exports = class LoginRouter {
       return HttpReponse.unauthoridedError()
     }
 
-    return HttpReponse.ok()
+    return HttpReponse.ok({ accessToken })
   }
 }
