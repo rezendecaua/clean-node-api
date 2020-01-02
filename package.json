@@ -1,18 +1,29 @@
 {
   "name": "clean-node-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "Construindo uma API Rest em NodeJS utilizando TDD, Clean Architecture e Design Patterns.",
   "main": "index.js",
+  "author": "Cauã Rezende",
+  "license": "ISC",
+  "keywords": [
+    "NodeJS",
+    "TDD",
+    "Clean Architecture",
+    "Design Patterns"
+  ],
+  "repository": {
+    "type": "git",
+    "directory": "https://github.com/rezendecaua/clean-node-api"
+  },
   "scripts": {
-    "test": "jest --watchAll",
-    "test:staged": "jest --passWithNoTests"
+    "test": "jest --silent --colors --noStackTrace --passWithNoTests",
+    "test:unit": "npm test -- --watchAll",
+    "test:staged": "npm test -- --findRelatedTests",
+    "test:ci": "npm test -- --coverage"
   }, 
   "standard": {
     "env": ["jest"]
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "husky": "^4.0.0-beta.5",
     "jest": "^24.9.0",
