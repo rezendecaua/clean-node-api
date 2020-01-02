@@ -17,7 +17,7 @@
   },
   "scripts": {
     "test": "jest --silent --colors --noStackTrace --passWithNoTests",
-    "test:unit": "npm test -- --watchAll",
+    "test:unit": "npm test -- --watch",
     "test:staged": "npm test -- --findRelatedTests",
     "test:ci": "npm test -- --coverage"
   }, 
