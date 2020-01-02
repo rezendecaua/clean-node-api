@@ -21,14 +21,19 @@
     "test:integration": "npm test -- --watch -c jest-integration-config.js",
     "test:staged": "npm test -- --findRelatedTests",
     "test:ci": "npm test -- --coverage"
-  }, 
+  },
   "standard": {
-    "env": ["jest"]
+    "env": [
+      "jest"
+    ]
   },
   "devDependencies": {
     "husky": "^4.0.0-beta.5",
     "jest": "^24.9.0",
     "lint-staged": "^9.5.0",
     "standard": "^14.3.1"
+  },
+  "dependencies": {
+    "validator": "^12.1.0"
   }
 }
