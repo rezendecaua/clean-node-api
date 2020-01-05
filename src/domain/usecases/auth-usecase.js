@@ -14,13 +14,7 @@ module.exports = class AuthUseCase {
   }
 
   async auth (email, password) {
-    if (!email) {
-      throw new MissingParamError('email')
-    }
-
-    if (!password) {
-      throw new MissingParamError('password')
-    }
+    this.validate(email, password)
 
     const user = await this.loadUserByEmailRepository.load(email)
     const isValid = user && await this.encrypter.compare(password, user.password)
@@ -30,5 +24,15 @@ module.exports = class AuthUseCase {
       return accessToken
     }
     return null
+  }
+
+  validate (email, password) {
+    if (!email) {
+      throw new MissingParamError('email')
+    }
+
+    if (!password) {
+      throw new MissingParamError('password')
+    }
   }
 }
