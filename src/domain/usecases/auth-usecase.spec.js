@@ -1,7 +1,7 @@
 const { MissingParamError } = require('../../utils/errors')
 const AuthUseCase = require('./auth-usecase')
 
-const makeEncrypter = () => {
+const makeEncrypterSpy = () => {
   class EncrypterSpy {
     async compare (password, hashedPassword) {
       this.password = password
@@ -45,7 +45,7 @@ const makeLoadUserByEmailRepositorySpy = () => {
 }
 
 const makeSut = () => {
-  const encrypterSpy = makeEncrypter()
+  const encrypterSpy = makeEncrypterSpy()
   const loadUserByEmailRepositorySpy = makeLoadUserByEmailRepositorySpy()
   const tokenGeneratorSpy = makeTokenGeneratorSpy()
 
@@ -126,5 +126,46 @@ describe('Auth UseCase', () => {
     const accessToken = await sut.auth('valid_email@email.com', 'valid_password')
     expect(accessToken).toBe(tokenGeneratorSpy.accessToken)
     expect(accessToken).toBeTruthy()
+  })
+
+  test('Should throw if invalid dependencies is provided', async () => {
+    const invalid = {}
+    const loadUserByEmailRepository = makeTokenGeneratorSpy()
+    const encrypter = makeEncrypterSpy()
+
+    const suts = [].concat(
+      new AuthUseCase(),
+      new AuthUseCase({}),
+      new AuthUseCase({
+        loadUserByEmailRepository: null,
+        encrypter: null,
+        tokenGenerator: null
+      }),
+      new AuthUseCase({
+        loadUserByEmailRepository,
+        encrypter: null,
+        tokenGenerator: null
+      }),
+      new AuthUseCase({
+        loadUserByEmailRepository,
+        encrypter: invalid,
+        tokenGenerator: null
+      }),
+      new AuthUseCase({
+        loadUserByEmailRepository,
+        encrypter,
+        tokenGenerator: null
+      }),
+      new AuthUseCase({
+        loadUserByEmailRepository,
+        encrypter,
+        tokenGenerator: invalid
+      })
+    )
+
+    for (const sut of suts) {
+      const promise = sut.auth('any_email@mail.com', 'any_password')
+      expect(promise).rejects.toThrow()
+    }
   })
 })
