@@ -15,6 +15,16 @@ const makeEncrypterSpy = () => {
   return encrypterSpy
 }
 
+const makeEncrypterSpyWithError = () => {
+  class EncrypterSpy {
+    async compare (password, hashedPassword) {
+      throw new Error()
+    }
+  }
+
+  return new EncrypterSpy()
+}
+
 const makeTokenGeneratorSpy = () => {
   class TokenGeneratorSpy {
     async generate (userId) {
@@ -26,6 +36,16 @@ const makeTokenGeneratorSpy = () => {
   const tokenGeneratorSpy = new TokenGeneratorSpy()
   tokenGeneratorSpy.accessToken = 'any_token'
   return tokenGeneratorSpy
+}
+
+const makeTokenGeneratorSpyWithError = () => {
+  class TokenGeneratorSpy {
+    async generate (userId) {
+      throw new Error()
+    }
+  }
+
+  return new TokenGeneratorSpy()
 }
 
 const makeLoadUserByEmailRepositorySpy = () => {
@@ -42,6 +62,16 @@ const makeLoadUserByEmailRepositorySpy = () => {
     password: 'hashed_password'
   }
   return loadUserByEmailRepositorySpy
+}
+
+const makeLoadUserByEmailRepositoryWithError = () => {
+  class LoadUserByEmailRepositorySpy {
+    async load () {
+      throw new Error()
+    }
+  }
+
+  return new LoadUserByEmailRepositorySpy()
 }
 
 const makeSut = () => {
@@ -160,6 +190,31 @@ describe('Auth UseCase', () => {
         loadUserByEmailRepository,
         encrypter,
         tokenGenerator: invalid
+      })
+    )
+
+    for (const sut of suts) {
+      const promise = sut.auth('any_email@mail.com', 'any_password')
+      expect(promise).rejects.toThrow()
+    }
+  })
+
+  test('Should throw if any dependency throws', async () => {
+    const loadUserByEmailRepository = makeLoadUserByEmailRepositorySpy()
+    const encrypter = makeEncrypterSpy()
+
+    const suts = [].concat(
+      new AuthUseCase({
+        loadUserByEmailRepository: makeLoadUserByEmailRepositoryWithError()
+      }),
+      new AuthUseCase({
+        loadUserByEmailRepository,
+        encrypter: makeEncrypterSpyWithError()
+      }),
+      new AuthUseCase({
+        loadUserByEmailRepository,
+        encrypter,
+        tokenGenerator: makeTokenGeneratorSpyWithError()
       })
     )
 
